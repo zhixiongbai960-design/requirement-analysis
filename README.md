@@ -1,10 +1,10 @@
 # Requirement Analysis Skill
 
-> WorkBuddy 技能 — 从模糊想法中挖掘真需求，支持批量需求识别与逐个深挖
+> 技能 — 从模糊想法中挖掘真需求，支持批量需求识别与逐个深挖
 
 ## 简介
 
-这是一个 [WorkBuddy](https://www.codebuddy.cn/docs/workbuddy/Overview) 技能（Skill），帮助用户通过结构化提问从口语化描述、文档或大段文本中挖掘真正的需求。
+这是一个技能（Skill），帮助用户通过结构化提问从口语化描述、文档或大段文本中挖掘真正的需求。
 
 **核心理念：** 需求的本质 = 目标（To-Be）与现状（As-Is）之间的差距。用户提出的往往是缩小差距的"某个方案"，而这个技能的作用是帮用户回到差距本身，找到"真正要解决的问题"。
 
@@ -220,17 +220,11 @@ requirement-analysis/
 
 ---
 
-## 技术要求
-
-- [WorkBuddy](https://www.codebuddy.cn/docs/workbuddy/Overview) 桌面客户端
-
----
-
 ## 作者
 
-![白志雄个人卡片](author-card.png)
-
-**白志雄** — 程序员 → 500强IT PM → OPC践行者，ISFJ·验证型理想主义者
+**白志雄 🛰baizhixiongbai** 
+程序员 → 500强IT PM → OPC践行者
+ISFJ·验证型理想主义者
 
 > 世间诸事，困于想，破于行
 
