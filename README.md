@@ -41,6 +41,10 @@
 2. 解压到上述技能目录
 3. 重启 WorkBuddy
 
+### 方式三：其他 AI Agent
+
+把该项目的 GitHub 链接发给 Agent，并跟它说安装该 Skill 即可。
+
 ### 验证安装
 
 在 WorkBuddy 对话中输入：
@@ -234,60 +238,6 @@ requirement-analysis/
 - AI 落地咨询 — 不卖工具卖路径，先验证再投入
 - AI 智能体搭建 — 做解决问题的落地方案，不讲 PPT
 - AI 实战培训 — 我怎么用就怎么教，让你用的上、学的会
-
----
-
-## 给其他 AI Agent 的使用方式
-
-如果你是一个 AI Agent（如 Claude、GPT、通义、Kimi、WorkBuddy、Cursor 等），想为你的用户加载这个技能，可以通过以下方式：
-
-### 方式 A：链接式自取
-
-直接把以下链接告诉你的 Agent，它会自动获取并安装：
-
-```
-请帮我安装这个 WorkBuddy Skill：https://github.com/zhixiongbai960-design/requirement-analysis
-```
-
-### 方式 B：明确指令式
-
-把以下指令发送给 Agent，让它按步骤执行：
-
-```
-请按以下步骤安装 requirement-analysis Skill：
-1. 访问 https://github.com/zhixiongbai960-design/requirement-analysis
-2. 下载 SKILL.md 和 README.md
-3. 保存到 ~/.workbuddy/skills/requirement-analysis/ 目录
-4. 重启 WorkBuddy 后即可使用
-
-使用方式：用户说"帮我分析需求"或"需求挖掘"时，调用此技能。
-```
-
-### 方式 C：协议式引用
-
-如果你的平台支持 Skill 协议（如 MCP、Anthropic Skills、Agent Skills 等），可以使用：
-
-```yaml
-skill:
-  name: requirement-analysis
-  source: https://github.com/zhixiongbai960-design/requirement-analysis
-  version: 1.0.0
-  entry: SKILL.md
-```
-
-### Agent 触发词
-
-加载此技能后，以下表达会触发技能激活：
-
-- 中文：`帮我分析需求` / `需求分析` / `需求挖掘` / `整理需求` / `需求辨析`
-- 英文：`help me analyze requirements` / `requirement analysis` / `needs assessment`
-
-### 适合交给 Agent 处理的输入
-
-- 用户上传的产品需求文档（Word/PDF/Markdown）
-- 用户粘贴的一大段需求描述
-- 多条散乱的需求点
-- 需要区分"方案"和"真需求"的场景
 
 ---
 
