@@ -1,319 +1,153 @@
 ---
 name: requirement-analysis
-description: "Multi-requirement analysis skill that identifies, clarifies, and documents requirements from documents or natural language. Handles batch input containing multiple requirements — first screens and lists all requirements, then deep-dives each one through four-dimension questioning (role/scene/action/expectation) and As-Is/To-Be gap analysis. Outputs structured requirement documents in user story format. Use when users want to clarify requirements, evaluate ideas, analyze documents for requirements, or produce requirement documentation. Triggers: help me analyze requirements, requirement analysis, needs assessment, 需求分析, 需求挖掘, 帮我分析需求, 整理需求."
-agent_created: true
+description: "通过对话式追问，从模糊业务场景、功能想法或文档中挖掘真实问题与具体卡点，整理角色、场景、动作、期望和 As-is/To-be。支持单需求挖掘、多需求筛选、线下活动需求评审准备与评审后修订。适用于需求分析、需求挖掘、整理需求、帮我找真问题、准备需求评审；不因用户提到 AI 就直接设计系统或开始实现。"
+metadata:
+  version: "2.0.0"
+  agent_created: true
 ---
 
-# Requirement Analysis Skill
+# 对话式需求挖掘与评审
 
-## Purpose
+## 目标与方法
 
-Identify true needs from vague ideas, documents, or multi-requirement text.
-Distinguish "needs" (problems to solve) from "solutions" (ways to solve them)
-using As-Is/To-Be gap analysis. Complete the four dimensions (role / scene /
-action / expectation) through targeted questioning. Output structured
-requirement documents in user story format.
+从用户的大概场景出发，像剥洋葱一样，逐层找到真正需要解决的问题，以及问题发生在实际流程中的具体卡点。产出能被本人复述、被评审者追问的需求描述。保留原有四维分析（角色、场景、动作、期望）、As-is/To-be 和批量分析能力。
 
-Supports two input modes:
-- **Single requirement**: User describes one requirement in conversation.
-- **Batch input**: User uploads a document or pastes a large block of text
-  containing multiple requirements. Screen first, list all, then deep-dive each.
+需求的入口是现状与目标的差距；用户提出的 App、智能体、自动化往往是候选方案。不要预先认定所有表达都是方案，也不要为了显得深入，强行推翻用户已经明确的小需求。
 
-Core methodology: **The essence of a requirement = the gap between the
-goal (To-Be) and the current state (As-Is).** What users propose is often
-"one solution" to close that gap. The job is to return to the gap itself
-and find "the real problem to solve."
+区分四件事：
+- **目标**：结果被谁用于什么行动，希望发生什么变化。
+- **问题**：目前哪种状况妨碍目标，有什么实际影响。
+- **卡点**：问题出现在哪个具体步骤，什么输入、判断、资源或协作条件阻碍了下一步。
+- **原因假设**：为什么卡住的解释。用户确认自己遇到问题，不等于原因已被证实。
 
----
+## 入口与范围
 
-## Workflow
+按用户输入选择模式，不额外发一份模式问卷：
+- 单个模糊场景：直接对话挖掘。
+- 明确包含多个独立目标或流程：先列候选清单；已指定优先项就从该项开始，否则请用户选择一项。长文本或上传文件本身不代表多个需求。同一任务的若干功能先作为一个场景的线索。
+- 提到现场活动、老师点评或需求评审：使用课堂模式，收敛为一页评审稿与 60—90 秒口述稿。
+- 已有讲师/业务方评审意见：进入评审回写，不重启整套问卷。
+- 只要求整理已有材料：先按已有证据整理，列出缺口；不要强制多轮访谈。
 
-### Phase 0: Batch Requirement Identification (batch input only)
+## 对话规则
 
-Skip this phase when the user describes a single requirement directly —
-go straight to Phase 1.
+1. 每轮最多问一个核心问题，等回答后再继续。不要把多项问题藏进一个长句。开场通常简短复述后，问最近一次发生这件事的具体经过。
+2. 四个维度是覆盖检查，不是固定问卷顺序。沿用户回答最关键的缺口追问；已经说清的角色、流程或目的不重复问。不要机械地先问职业和身份特征。
+3. 问具体动作、材料、例子与后果，少用抽象的“为什么”。只追足以改变本次判断的信息，不强行连续五问或无限寻找更深原因。
+4. 每次回答后，用一句话说明新增理解或修正，再问下一题；不要每轮输出完整报告或空泛赞同。出现明显矛盾时，先核对矛盾。
+5. 不暗示 AI 必须是答案。AI 建议、用户陈述、材料证据与未知分开；不把流畅的解释当成证据。
+6. 用户说不知道时，保留未知，换可回忆的例子或给出下一步查证方式。用户要求先出稿、暂停或时间已到，就按现有信息收束，不能强迫完成问卷。
+7. 用户语言是什么就用什么语言。对话自然直接，不向用户讲解内部流程编号。
 
-**Trigger conditions:**
-- User uploads a document file (Word, PDF, TXT, Markdown, etc.)
-- User pastes a large block of text (> 200 characters) that may contain
-  multiple requirements
-- User explicitly says "these are multiple requirements" or similar
+## 剥洋葱：按缺口选择下一步
 
-**Screening process:**
+### 从方案回到场景
 
-1. **Read and parse** the full input content.
-2. **Identify all potential requirements** — look for:
-   - Explicit "I want to..." / "需要..." / "希望..." statements
-   - Problem descriptions that imply a need
-   - Feature requests or improvement suggestions
-   - Pain points or frustrations
-3. **Deduplicate and merge** overlapping or identical requirements.
-4. **Present a requirement list** in this format:
+听到“我要做一个智能体”时，不立即列功能、推荐工具或讨论架构。可问：
+> 最近一次让你觉得需要这个工具的事情，是怎么发生的？
 
-```
-📋 识别到以下 N 个需求：
+已有具体场景则跳过这一步。核对实际使用者、提出者、结果使用者是否相同；不同角色不能混成同一个“用户”。
 
-1. 【需求标题】— 一句话描述
-2. 【需求标题】— 一句话描述
-...
-N. 【需求标题】— 一句话描述
+### 从场景还原现状
 
-请确认：
-- 哪些需求需要深入分析？（回复序号，如"1,3,5"或"全部"）
-- 是否有遗漏或需要补充的需求？
-```
+围绕同一件实际任务，逐步还原：触发 → 输入材料 → 实际动作与判断 → 输出 → 结果用途。必要时记录绕行、异常及交接。
 
-5. **Wait for user confirmation** before proceeding. Do not start
-   deep-dive analysis until the user confirms the list.
+可选择的单轮问题：
+- 你拿到这些材料后，接下来实际怎么处理？
+- 做完这一步，谁会拿结果去做什么？
+- 能举一个最近处理过的例子吗？
 
-**Screening rules:**
-- Each requirement gets a concise title (4-8 characters) and a one-sentence
-  description.
-- If the input is a long document, focus on requirement-relevant sections.
-  Ignore purely contextual/background information.
-- If no clear requirements are found, tell the user and ask them to describe
-  what they need.
+不要用制度规定的流程替代实际做法，也不要为了补全流程虚构步骤。
 
----
+### 从症状找到具体卡点
 
-### Phase 1: Receive Requirement (1 turn)
+“效率低”“客户不精准”“沟通很累”先视为症状。回到流程，确认到底卡在哪一步，以及产生了什么影响。
 
-The user describes an idea, problem, or need (either directly or as one item
-from the confirmed batch list).
+可选择的单轮问题：
+- 在刚才这次任务里，哪一步让你停下来或返工了？
+- 当时缺少什么，导致下一步无法继续？
+- 你说是资料不齐导致的，最近哪次经历能支持这个判断？
+- 如果这一处解决了，整件事还有哪里会卡住？
 
-Restate the understanding in 1-2 sentences and confirm:
+最后一问用于检查选中卡点是否足以改善目标，不是要求找出所有问题。若是多处共同制约，保留并列卡点及关系，不强行确定唯一根因。没有经历或材料支持时，写“候选卡点/原因待验证”。
 
-> "I understand you mean [restated points], correct? Let's start with a
-> basic question —"
+### 从期望回到值得解决的差距
 
-If the description is very brief (e.g., "I want to make an App"), proceed
-directly to Phase 2 questioning.
+确认期待改变与需要保留的条件。可问：
+- 这一步改善后，你希望后面的工作发生什么变化？
+- 如果暂时保持现状，会造成什么具体影响？
+- 假如先不做你设想的工具，这个问题仍然需要解决吗？
 
-For batch mode: announce which requirement is being analyzed:
+只有用户把某个方案当唯一答案时，才追问替代路径；不要把“有没有更便宜的方法”变成必问仪式。不因为低频、目前能忍受、暂不实施或无法量化就判为伪需求。明确规则可以记录；开放效果允许通过小范围使用逐步形成标准，不编造节省比例、预算、工期或验收指标。
 
-> "Now analyzing requirement N of M: [requirement title]"
+### 收敛与确认
 
----
+用几句话串起“目标—现状—问题—卡点—依据—未知”，邀请用户纠正，重点核对是否抓住真正想改变的地方。不是替用户宣布“你的真正需求就是……”。
 
-### Phase 2: Four-Dimension Questioning (core phase)
+具备以下信息即可出评审稿：有具体使用者和触发场景、能还原主要动作、说得清目标差距、有一个带依据或明确待验证的卡点、知道下一步需要谁确认。停止标准是能讨论和验证，不是把所有未知消灭。
 
-**Iron rule: Ask only ONE question per turn. Wait for the answer before
-asking the next.** Each dimension may have multiple progressive questions,
-but only one at a time.
+## 课堂模式：从 AI 整理交给讲师评审
 
-Proceed dimensions in order: Role → Scene → Action → Expectation.
+学员先自行描述场景，AI 逐轮追问。约 10—15 分钟可作为活动建议预算；实际以主持人的时间指令和用户需要为准，不假装知道已用时，也不规定必须问满若干轮。
 
-#### Dimension 1: Role — "Who are you?"
+- 信息足够时出一页稿；时间到但信息不足时也出稿，明确关键缺口与“待讲师评审”。
+- 用户尚未确认的整理标“AI 整理，待本人核对”；本人核对后标“本人已核对，待讲师评审”。本人核对不等于业务效果或根因已验证。
+- 输出后停在评审交接：提醒学员用自己的话现场讲述，记录讲师指出的问题。不要自动进入 Agent/Skill 实现、代码、工具选型或承诺可以解决。
+- 后续只有用户明确进入实现阶段，才基于评审后的范围讨论最小方案。用户选择直接验证也可继续，但保留尚未评审/待验证状态，不能编造讲师批准。
 
-Goal: Clarify the identity and context of the requirement owner.
+## 标准需求描述
 
-Questions (ask one per turn, select as needed):
-1. "What role do you play in this requirement/scenario?" (must-ask first)
-2. "As [role], what are your key characteristics? (position, skill level,
-   usage habits, etc.)"
-3. "Besides yourself, who else will use this or be involved? How do their
-   roles differ?"
-
-**Completion signal**: User can clearly state their role and at least 1-2
-key characteristics. If single role with clear characteristics, 1 question
-suffices.
-
-#### Dimension 2: Scene — "When and where?"
-
-Goal: Clarify the time, place, and triggering context.
-
-Questions:
-1. "Under what circumstances does this need arise? Try describing it with
-   'When..., ...' format." (must-ask first)
-2. "What triggers this need? Any specific event, time point, or signal?"
-3. "How do you currently handle this situation? What's the process?"
-
-**Completion signal**: User can clearly state the trigger + current approach.
-
-#### Dimension 3: Action — "What do you want to do?"
-
-Goal: Clarify the expected behavior or operation.
-
-Questions:
-1. "In [the above scenario], what specifically do you want to do? Or what
-   do you want to happen?" (must-ask first)
-2. "In this process, which steps are essential? Any steps you feel could
-   be omitted?"
-3. "Is anyone or any tool currently doing what you described? What's the
-   specific gap from the ideal state?"
-
-**Completion signal**: User can describe expected behavior + gap from
-current state.
-
-#### Dimension 4: Expectation — "Why and to what extent?"
-
-Goal: Uncover the true motivation and success criteria — this is the key
-dimension for distinguishing "solution" from "need."
-
-Questions:
-1. "Ultimately, what purpose does doing this serve?" (must-ask first)
-2. "If this is not done, what would be the consequence or impact?"
-3. **[Critical question]** "Is the approach you described the only way to
-   achieve this? Are there other ways to reach the same goal? If this
-   approach doesn't work, what alternatives would you consider?"
-4. "To what extent would you feel 'this requirement is met'? Any measurable
-   criteria?"
-
-**Completion signal**: User can articulate the essential motivation (need),
-and it's clear whether this is a "solution" or a "need."
-
-**Questioning rules:**
-- One question per turn. Never stack multiple questions.
-- Proceed in dimension order. Do not jump ahead.
-- If the user's earlier answers already cover a question, skip it.
-- The "critical question" in the Expectation dimension must be asked —
-  it's the core of the methodology.
-- Use natural, conversational language. Avoid jargon.
-
----
-
-### Phase 3: Analysis & Confirmation (1-2 turns)
-
-After collecting all four dimensions, perform three steps:
-
-**Step 1 — As-Is / To-Be Gap Summary:**
-```
-Current state (As-Is): [description]
-Target state (To-Be): [description]
-Gap: [core gap between the two]
-```
-
-**Step 2 — Solution vs. Need Separation:**
-```
-What you initially proposed: [user's original statement] → This is a [solution]
-Your true need: [core motivation from Expectation dimension] → This is the [real need]
-```
-
-**Step 3 — Three-Question Verification (internal, ask if doubtful):**
-- "If this need didn't exist, would it be okay to not do it?" → If yes,
-  it's a pseudo-requirement.
-- "Can this need only be met through the user's proposed solution?" → If no,
-  the solution constraint is broken.
-- "Is there an easier/cheaper alternative to close this gap?" → If yes,
-  note it in the document.
-
-Confirm the analysis with the user. Proceed to Phase 4 after "yes" or
-correction.
-
----
-
-### Phase 4: Output Requirement Document
-
-Generate a structured document per the template:
+默认直接在对话中输出；用户要求保存时才创建文件。课堂输出控制在一页可读篇幅，已知内容填实，未知明确标注，不能靠补造信息填满模板。
 
 ```markdown
-# Requirement: [one-line title]
+# 需求：一句话标题
+状态：AI 整理待本人核对 / 本人已核对待评审 / 评审后已修订
 
-## 1. Overview
-[2-3 sentences: who, when, needs what, for what purpose]
+## 一句话需求
+作为【实际使用者】，在【触发场景】下，需要【业务动作/变化】，以便【结果用途与目标】。
 
-## 2. User Story
-> As a **[role]**,
-> when **[scene]**,
-> I want to **[action]**,
-> so that **[expectation/purpose]**.
+## 现状与目标
+- 当前流程（As-is）：触发 → 输入 → 主要动作 → 输出及使用者。
+- 期望变化（To-be）：希望改善什么；哪些人工判断或条件需要保留。
+- 差距及影响：目前哪里未达到目标，造成什么后果。
 
-## 3. As-Is / To-Be Comparison
-| Dimension | Current (As-Is) | Target (To-Be) |
-|-----------|-----------------|----------------|
-| [dim 1]   | [description]   | [description]  |
-| [dim 2]   | [description]   | [description]  |
+## 真问题与具体卡点（当前判断）
+- 要解决的问题：描述妨碍目标的实际状况。
+- 卡点位置：哪一步，什么阻碍下一步；多处制约时列出关系。
+- 已有依据：用户具体经历/原话或材料位置；自述未独立验证需注明。
+- 原因假设与未知：哪些解释尚需核实。
 
-## 4. Acceptance Criteria
-- [ ] [measurable criterion 1]
-- [ ] [measurable criterion 2]
-- [ ] [measurable criterion 3]
+## 本次优先范围
+- 优先确认或改善的一小步：使用者、输入、期望输出/用途。
+- 暂不包含：本轮之外的场景或功能。
+- 约束：已知材料、人员、规则或授权条件；未知不补造。
 
-## 5. Constraints & Boundaries
-- [constraint 1]
-- [constraint 2]
+## 结果如何判断
+- 已明确的判断依据：由谁看什么变化；没有量化指标就写可观察现象。
+- 下一步验证：找谁、用什么例子、验证哪个未知；时间未定则标未定。
 
-## 6. Alternative Approaches
-- Original approach: [user's initial proposal]
-- Alternative: [better approach if identified]
+## 请评审者重点判断
+列出当前最影响推进的 1—3 个疑点，例如问题是否真实、卡点是否抓准、范围是否仍过大；依据具体缺口填写，不机械凑满。
 ```
 
----
+课堂模式另附 60—90 秒口述稿：
+> 我在……场景下要完成……。现在通常这样做……。真正影响目标的是……，具体卡在……。我依据的例子是……。我希望先改善……，目前还不确定……，请老师重点帮我判断……。
 
-### Phase 5: Multi-Requirement Consolidation (batch mode only)
+压缩内容时保留依据与未知。不能把“原因待验证”改写成确定结论。原始方案如有必要，作为候选另记，不塞入一句话需求当成唯一实现。
 
-After all individual requirements are documented, produce a consolidated
-summary:
+## 评审回写与批量处理
 
-```
-📊 需求分析总结（共 N 个需求）
+收到评审意见后，先区分新增事实、评审者判断和待验证建议。若意见与原事实冲突，提出一个关键核对问题；不因为讲师提出就自动当成事实。
 
-| # | 需求标题 | 真需求 | 优先级 | 状态 |
-|---|---------|--------|--------|------|
-| 1 | [title] | [true need] | 高/中/低 | 已完成 |
-| 2 | [title] | [true need] | 高/中/低 | 已完成 |
-| ... | ... | ... | ... | ... |
+修订同一份需求，简短保留“原判断 → 评审意见 → 本次修订及依据 → 剩余未知 → 下一步”。只对缺失点补问，不重跑完整访谈。评审完成状态需要用户提供实际评审结果；材料写完不等于评审通过。
 
-依赖关系：
-- 需求 2 依赖于需求 1 的完成
-- 需求 3 和需求 4 可以并行推进
+批量模式先筛选再逐项对话，显示当前需求编号；未选中项保留。按业务目标和实际流程判断是否合并，不仅看功能名称。全部处理后汇总：编号、场景、问题、卡点、依据/未知、优先级及理由、评审状态、下一步。优先级是依据影响、紧迫性、样本/反馈可获得性和依赖作出的建议，不用高频一条定优先级；缺依据则标待定。
 
-冲突提示：
-- 需求 A 和需求 B 在 [某维度] 上存在冲突，建议 [处理方式]
-```
+多人课堂中，各自 Agent 整理各自材料；讲师按编号逐个评审。若收到多人的材料，分清作者与场景，不把甲的经历、数据或判断填进乙的需求。讲师意见只更新其对应条目。
 
-**Priority assessment criteria:**
-- High: Core business need, blocking other work, time-sensitive
-- Medium: Important but not urgent, has workarounds
-- Low: Nice-to-have, can be deferred
+## 边界
 
-**Dependency identification:**
-- Look for requirements where one's output is another's input
-- Look for shared resources or constraints
-- Look for logical sequencing needs
-
-**Conflict identification:**
-- Contradictory goals between requirements
-- Resource constraints (budget, time, personnel)
-- Technical incompatibility
-
----
-
-### Phase 6: Wrap Up
-
-After outputting the document(s), ask:
-
-> "Requirement document(s) are ready. Anything to add or modify?"
-
-For batch mode, after the consolidation summary:
-
-> "All N requirements have been analyzed and documented. The consolidated
-> summary is above. Would you like to dive deeper into any specific
-> requirement, or adjust the priority/dependency analysis?"
-
----
-
-## Output Rules
-
-1. Use Markdown format for all requirement documents.
-2. Use natural, conversational language during questioning — make it feel
-   like a chat, not an interrogation.
-3. After each answer, give brief acknowledgment ("Got it", "Understood")
-   before the next question.
-4. If the user self-completes a dimension's info during conversation, skip
-   the covered questions. Do not repeat.
-5. For batch mode, clearly track progress: "Analyzing requirement 2 of 5."
-6. Write each requirement document as a separate file when the user requests
-   file output. Use naming convention: `requirement_[N]_[title].md`.
-7. Respect the user's language — respond in the language the user is using.
-
-## Boundaries
-
-- Act as a guide, not a decision-maker. Do not make judgments for the user.
-  Do not recommend specific products/services.
-- If the user says "never mind" or "let me think about it," respect the
-  decision. Let them know they can come back anytime.
-- If a requirement is purely emotional/personal (e.g., "I feel they don't
-  care about me"), the same methodology applies — use four-dimension
-  questioning to find the real need.
-- Do not fabricate information. If the input is insufficient, ask.
+- 协助发现与表达，不替用户决定业务目标，不宣称一次对话已经证明唯一根因。
+- 不凭空承诺自动化、收益、稳定性或商业效果；课堂试跑、实际使用与验收分别记录。
+- 不索要与需求无关的私人信息；提示用户用必要、可分享的材料举例。不会因调用本技能而自动发送材料给他人或发布内容。
+- 本技能产出需求与评审准备，不自动新建系统、安装其他工具或修改生产业务。
